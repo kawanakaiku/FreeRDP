@@ -62,6 +62,8 @@ public abstract class ClipboardManagerProxy
 	{
 		private final ClipboardManager mClipboardManager;
 		private OnClipboardChangedListener mListener;
+		
+		private String mLastClipboardData = null;
 
 		public HCClipboardManager(Context ctx)
 		{
@@ -70,8 +72,17 @@ public abstract class ClipboardManagerProxy
 
 		@Override public void setClipboardData(String data)
 		{
+			String safeData = data == null ? "" : data;
+
+			if (safeData.equals(mLastClipboardData))
+			{
+				return;
+			}
+			
+			mLastClipboardData = safeData;
+
 			mClipboardManager.setPrimaryClip(
-			    ClipData.newPlainText("rdp-clipboard", data == null ? "" : data));
+			    ClipData.newPlainText("rdp-clipboard", safeData));
 		}
 
 		@Override public void onPrimaryClipChanged()
