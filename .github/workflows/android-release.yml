@@ -49,18 +49,32 @@ jobs:
 
       - name: Build APK (Release)
         working-directory: client/Android/Studio
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           chmod +x gradlew
-          cat << 'EOF' >> aFreeRDP/build.gradle
+          echo "$KEYSTORE_BASE64" | base64 --decode > release.keystore
+          cat << EOF >> aFreeRDP/build.gradle
           
           android {
               defaultConfig {
-                  versionCode 1
-                  versionName "1.0.0"
+                  versionCode $((GITHUB_RUN_NUMBER))
+                  versionName "1.0.$((GITHUB_RUN_NUMBER))"
+              }
+              signingConfigs {
+                  releaseConfig {
+                      storeFile file("../release.keystore")
+                      storePassword "$KEYSTORE_PASSWORD"
+                      keyAlias "$KEY_ALIAS"
+                      keyPassword "$KEY_PASSWORD"
+                  }
               }
               buildTypes {
                   release {
-                      signingConfig null
+                      signingConfig signingConfigs.releaseConfig
                   }
               }
           }
