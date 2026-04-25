@@ -17,7 +17,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -46,6 +45,16 @@ jobs:
       - name: Build APK (Release)
         working-directory: client/Android/Studio
         run: |
+          cat << 'EOF' >> aFreeRDP/build.gradle
+          
+          android {
+              defaultConfig {
+                  versionCode 1
+                  versionName "1.0.0"
+              }
+          }
+          EOF
+          
           chmod +x gradlew
           ./gradlew assembleRelease
 
@@ -54,5 +63,5 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            client/Android/Studio/app/build/outputs/apk/release/*-unsigned.apk
+            client/Android/Studio/aFreeRDP/build/outputs/apk/release/*-unsigned.apk
           generate_release_notes: true
