@@ -45,7 +45,7 @@ jobs:
       - name: Build APK (Release)
         working-directory: client/Android/Studio
         run: |
-          yes | sdkmanager --licenses
+          yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses
           
           cat << 'EOF' >> aFreeRDP/build.gradle
           
