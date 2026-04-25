@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -24,29 +25,27 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install dependencies
+      - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y nasm
+          sudo apt-get install -y nasm ninja-build
 
-      - name: Setup Environment Variables for SDK/NDK
+      - name: Setup Android SDK and Exact NDK
         run: |
+          yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses
+          ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager "ndk;29.0.13113456" "cmake;3.22.1"
           echo "ANDROID_SDK_PATH=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "ANDROID_NDK_PATH=$ANDROID_NDK_LATEST_HOME" >> $GITHUB_ENV
+          echo "ANDROID_NDK_PATH=$ANDROID_HOME/ndk/29.0.13113456" >> $GITHUB_ENV
 
-      - name: Build Native Libraries (32-bit Release)
+      - name: Build Native Libraries (All Architectures)
         run: |
-          bash ./scripts/android-build-freerdp.sh --ndk ${{ env.ANDROID_NDK_PATH }} --sdk ${{ env.ANDROID_SDK_PATH }} --conf ./scripts/android-build-32.conf
-
-      - name: Build Native Libraries (64-bit Release)
-        run: |
-          bash ./scripts/android-build-freerdp.sh --ndk ${{ env.ANDROID_NDK_PATH }} --sdk ${{ env.ANDROID_SDK_PATH }} --conf ./scripts/android-build-64.conf
+          sed -i 's/CMAKE_BUILD_TYPE=Debug/CMAKE_BUILD_TYPE=Release/g' scripts/android-build.conf
+          bash ./scripts/android-build-freerdp.sh --ndk ${{ env.ANDROID_NDK_PATH }} --sdk ${{ env.ANDROID_SDK_PATH }}
 
       - name: Build APK (Release)
         working-directory: client/Android/Studio
         run: |
-          yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses
-          
+          chmod +x gradlew
           cat << 'EOF' >> aFreeRDP/build.gradle
           
           android {
@@ -56,8 +55,6 @@ jobs:
               }
           }
           EOF
-          
-          chmod +x gradlew
           ./gradlew assembleRelease
 
       - name: Create Release and Upload APK
