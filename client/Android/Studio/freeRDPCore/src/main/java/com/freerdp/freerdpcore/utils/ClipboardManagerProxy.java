@@ -96,6 +96,16 @@ public abstract class ClipboardManagerProxy
 				if (cs != null)
 					data = cs.toString();
 			}
+
+			String safeData = data == null ? "" : data;
+
+			if (safeData.equals(mLastClipboardData))
+			{
+				return;
+			}
+
+			mLastClipboardData = safeData;
+
 			if (mListener != null)
 			{
 				mListener.onClipboardChanged(data);
