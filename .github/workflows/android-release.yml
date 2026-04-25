@@ -5,6 +5,11 @@ on:
     tags:
       - '*'
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'tag name for release (ex: v1.0.0-manual)'
+        required: true
+        default: 'manual-build'
 
 jobs:
   build-and-release:
@@ -60,12 +65,14 @@ jobs:
               }
           }
           EOF
+          
           ./gradlew assembleRelease
 
       - name: Create Release and Upload APK
         uses: softprops/action-gh-release@v2
-        #if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
+          tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
           files: |
             client/Android/Studio/aFreeRDP/build/outputs/apk/release/*-unsigned.apk
           generate_release_notes: true
