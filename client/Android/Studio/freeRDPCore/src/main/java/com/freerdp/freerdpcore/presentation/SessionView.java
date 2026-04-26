@@ -92,8 +92,9 @@ public class SessionView extends View
 		invScaleMatrix = new Matrix();
 		invalidRegionF = new RectF();
 
-		setDrawingCacheEnabled(false);
-		setLayerType(View.LAYER_TYPE_NONE, null);
+		setOverScrollMode(View.OVER_SCROLL_NEVER);
+		setVerticalFadingEdgeEnabled(false);
+		setHorizontalFadingEdgeEnabled(false);
 	}
 
 	/* External Mouse Hover */
