@@ -91,6 +91,9 @@ public class SessionView extends View
 		scaleMatrix = new Matrix();
 		invScaleMatrix = new Matrix();
 		invalidRegionF = new RectF();
+
+		setDrawingCacheEnabled(false);
+		setLayerType(View.LAYER_TYPE_NONE, null);
 	}
 
 	/* External Mouse Hover */
@@ -141,10 +144,6 @@ public class SessionView extends View
 		Bitmap bitmap = surface.getBitmap();
 		width = bitmap.getWidth();
 		height = bitmap.getHeight();
-
-		android.util.DisplayMetrics metrics = getResources().getDisplayMetrics();
-		int maxPhysicalDim = Math.max(metrics.widthPixels, metrics.heightPixels);
-
 		surface.setBounds(0, 0, width, height);
 
 		setMinimumWidth(width);
