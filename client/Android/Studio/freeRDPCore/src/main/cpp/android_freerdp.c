@@ -190,8 +190,6 @@ static BOOL android_pre_connect(freerdp* instance)
 	if (!settings)
 		return FALSE;
 
-	freerdp_settings_set_bool(settings, FreeRDP_SupportGraphicsPipeline, FALSE);
-
 	int rc = PubSub_SubscribeChannelConnected(instance->context->pubSub,
 	                                          android_OnChannelConnectedEventHandler);
 
