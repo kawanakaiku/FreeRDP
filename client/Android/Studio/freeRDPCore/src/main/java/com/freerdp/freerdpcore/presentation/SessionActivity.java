@@ -493,8 +493,6 @@ public class SessionActivity extends AppCompatActivity
 			screenSettings.setWidth(screen_width);
 		}
 
-		screenSettings.setColors(16);
-
 		connectWithTitle(bookmark.getLabel());
 	}
 
