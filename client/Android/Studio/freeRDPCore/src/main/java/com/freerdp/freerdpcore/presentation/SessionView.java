@@ -141,6 +141,21 @@ public class SessionView extends View
 		Bitmap bitmap = surface.getBitmap();
 		width = bitmap.getWidth();
 		height = bitmap.getHeight();
+
+		android.util.DisplayMetrics metrics = getResources().getDisplayMetrics();
+		int maxPhysicalDim = Math.max(metrics.widthPixels, metrics.heightPixels);
+
+		if (width > maxPhysicalDim || height > maxPhysicalDim)
+		{
+			Log.i(TAG, "Resolution " + width + "x" + height + " exceeds physical limit (" + maxPhysicalDim + "). Using SOFTWARE rendering.");
+			setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		}
+		else
+		{
+			Log.i(TAG, "Resolution " + width + "x" + height + " is safe. Using HARDWARE rendering.");
+			setLayerType(View.LAYER_TYPE_HARDWARE, null);
+		}
+
 		surface.setBounds(0, 0, width, height);
 
 		setMinimumWidth(width);
