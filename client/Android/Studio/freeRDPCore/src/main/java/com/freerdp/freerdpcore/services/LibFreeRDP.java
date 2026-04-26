@@ -319,10 +319,6 @@ public class LibFreeRDP
 			args.add("/gfx");
 			args.add("/network:auto");
 		}
-		else
-		{
-			args.add("-gfx");
-		}
 
 		if (flags.getH264() && mHasH264)
 		{
