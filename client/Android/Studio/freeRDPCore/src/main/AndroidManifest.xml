@@ -68,7 +68,6 @@
         <activity
             android:exported="true"
             android:name=".presentation.SessionActivity"
-            android:hardwareAccelerated="false"
             android:theme="@style/Theme.Main"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize|smallestScreenSize|density|screenLayout|navigation"
             android:windowSoftInputMode="adjustResize">
